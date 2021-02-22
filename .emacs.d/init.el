@@ -47,8 +47,9 @@
 (when window-system
   ;; tool-barを非表示
   (tool-bar-mode 0)
+  )
   ;; scroll-barを非表示
-  (scroll-bar-mode 0))
+  ;; (scroll-bar-mode 0))
 
 ;; CocoaEmacs以外はメニューバーを非表示
 (unless (eq window-system 'ns)
@@ -130,7 +131,7 @@
 (setq frame-title-format "%f")
 
 ;; 行番号を常に表示する
-(global-linum-mode t)
+;; (global-linum-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; インデントの設定                                       ;;
@@ -543,3 +544,78 @@
 ;;       sql-server "localhost"            ;ホスト名
 ;;       sql-product 'mysql)               ;データベースの種類
 
+(when (require 'git-gutter nil t)
+  (global-git-gutter-mode t)
+  ;; linum-modeを利用している場合は次の設定も追加
+  ;; (git-gutter:linum-setup)
+  )
+
+;; (custom-set-variables
+;;  '(git-gutter:modified-sign "*")
+;;  '(git-gutter:added-sign ">")
+;;  '(git-gutter:deleted-sign "x"))
+
+(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+
+;; multi-termの設定
+(when (require 'multi-term nil t)
+  ;; 使用するシェルを指定
+  (setq mult-term-program "/bin/bash"))
+
+;; TRAMPでバックアップファイルを作成しない
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
+
+;; キャッシュを作成
+(setq woman-cache-filename "~/.emacs.d/.wmncach.el")
+
+;; manパスを設定
+(setq woman-manpath '("/usr/share/man"
+                      "/usr/local/share/man"
+                      "/usr/local/share/man/ja"))
+
+;; 既存のソースを読み込む
+(require 'helm-elisp)
+(require 'helm-man)
+;; 基本となるソースを定義
+(setq helm-for-document-sources
+      '(helm-source-info-elisp
+        helm-source-info-cl
+        helm-source-info-pages
+        helm-source-man-pages))
+;; helm-for-documentコマンドを定義
+(defun helm-for-document ()
+  "Preconfigured 'helm' for helm-for-document."
+  (interactive)
+  (let ((default (thing-at-point 'symbol)))
+    (helm :sources
+          (nconc
+           (mapcar (lambda (func)
+                     (funcall func default))
+                   helm-apropos-function-list)
+           helm-for-document-sources)
+          :buffer "*helm for docuemont*")))
+
+;; s-dにhelm-for-documentを割り当て
+(define-key global-map (kbd "s-d") 'helm-for-document)
+
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+
+;; web-modeにキーバインドを追加する
+(define-key php-mode-map (kbd "C-t t") 'phpunit-current-test)
+(define-key php-mode-map (kbd "C-t c") 'phpunit-current-class)
+(define-key php-mode-map (kbd "C-t p") 'phpunit-current-project)
+
+
+(require 'json-reformat)
+
+(defun my-reverse-region (beg end)
+ "Reverse characters between BEG and END."
+ (interactive "r")
+ (let ((region (buffer-substring beg end)))
+   (delete-region beg end)
+   (insert (nreverse region))))
+
+;; magit
+(global-set-key (kbd "C-x g") 'magit-status)
