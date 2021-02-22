@@ -298,9 +298,9 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 
 ;; web-modeにキーバインドを追加する
-(define-key php-mode-map (kbd "C-t t") 'phpunit-current-test)
-(define-key php-mode-map (kbd "C-t c") 'phpunit-current-class)
-(define-key php-mode-map (kbd "C-t p") 'phpunit-current-project)
+;; (define-key php-mode-map (kbd "C-t t") 'phpunit-current-test)
+;; (define-key php-mode-map (kbd "C-t c") 'phpunit-current-class)
+;; (define-key php-mode-map (kbd "C-t p") 'phpunit-current-project)
 
 
 (require 'json-reformat)
