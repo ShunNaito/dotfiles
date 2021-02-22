@@ -37,8 +37,9 @@
 (when window-system
   ;; tool-barを非表示
   (tool-bar-mode 0)
+  )
   ;; scroll-barを非表示
-  (scroll-bar-mode 0))
+  ;; (scroll-bar-mode 0))
 
 ;; CocoaEmacs以外はメニューバーを非表示
 (unless (eq window-system 'ns)
@@ -238,3 +239,4 @@
 
 ;; If you enable global minor mode
 (global-git-gutter-mode t)            
+
