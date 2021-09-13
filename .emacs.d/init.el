@@ -37,19 +37,13 @@
 (when window-system
   ;; tool-barを非表示
   (tool-bar-mode 0)
-  )
   ;; scroll-barを非表示
-  ;; (scroll-bar-mode 0))
+   (scroll-bar-mode 0))
 
 ;; CocoaEmacs以外はメニューバーを非表示
 (unless (eq window-system 'ns)
   ;; menu-barを非表示
   (menu-bar-mode 0))
-
-;; Emacs 23より前のバージョンを利用している方は
-;; user-emacs-directory変数が未定義のため次の設定を追加
-(when (< emacs-major-version 23)
-  (defvar user-emacs-directory "~/.emacs.d/"))
 
 ;; cl-libパッケージを読み込む
 (require 'cl-lib)
@@ -93,35 +87,18 @@
 ;; 行番号/カラム番号を表示する
 (column-number-mode t)
 
-;; 行番号を表示させない
-(line-number-mode 0)
-
 ;; ファイルサイズを表示
 (size-indication-mode t)
 ;; 時計を表示
-;; (setq display-time-day-and-date 0) ; 曜日・月・日を表示
-;; (setq display-time-24hr-formt 0) ; 24時間表示
 (display-time-mode t)
 ;; バッテリー残量を表示
 (display-battery-mode t)
-
-;; リージョン内の行数と文字数をモードラインに表示する
-(defun count-lines-and-chars ()
-  (if mark-active
-      (format "(%dlines,%dchars) "
-	      (count-lines (region-beginning) (region-end))
-	      (- (region-end) (region-beginning)))
-    ""))
-
-;; emacs26からdefault-*の変数が使えなくなった
-;; (add-to-list 'default-mode-line-format
-;; 	     '(:eval (count-lines-and-chars)))
 
 ;; タイトルバーにファイルのフルパスを表示
 (setq frame-title-format "%f")
 
 ;; 行番号を常に表示する
-;; (global-linum-mode t)
+(global-linum-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; インデントの設定                                       ;;
@@ -131,11 +108,6 @@
 
 ;; インデントにタブ文字を使用しない
 (setq-default indent-tabs-mode nil)
-
-;; php-modeのみタブを利用しない
-(add-hook 'php-mode-hook
-          (lambda ()
-            (setq indent-tabs-mode nil)))
 
 (add-hook 'c-mode-common-hook
           (lambda ()
@@ -149,7 +121,7 @@
 ;;    表示・装飾に関する設定                              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; リージョンの背景色を変更
-;; (set-face-background 'region "darkgreen")
+(set-face-background 'region "darkgreen")
 
 ;; AsciiフォントをMenloに
 (set-face-attribute 'default nil
@@ -193,11 +165,38 @@
 ;; parenのスタイル: expressionは括弧内も強調表示
 (setq show-paren-style 'expression)
 ;; フェイスを変更する
-;;(set-face-background 'show-paren-match-face nil)
 (set-face-background 'show-paren-match nil)
 (set-face-underline-p 'show-paren-match "darkgreen")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;    バックアップとオートセーブ                         ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; バックアップファイルを作成しない
+;; (setq make-backup-files nil)            ;初期値はt
+;; オートセーブファイルを作らない
+;; (setq aut-save-default nil)             ;初期値はt
+
+;; 括弧を補完する
+;; (electric-pair-mode 1)
+
+;; バックアップファイルの作成場所をシステムのTempディレクトリに変更する
+;; (setq backup-directory-alist
+;;       `((".*" . ,temporary-file-directory)))
+;; オートセーブファイルの作成場所をシステムのTempディレクトリに変更する
+;; (setq auto-save-file-name-transforms
+;;       `((".*" ,temporary-file-directory t)))
+
+;; バックアップとオートセーブファイルを~/.emacs.d/backups/へ集める
+(add-to-list 'backup-directory-alist
+             (cons "." "~/.emacs.d/backups/"))
+(setq auto-save-file-name-transforms
+      `((".*" ,(expand-file-name "~/.emacs.d/backups/") t)))
+
+;; オートセーブファイル作成までの秒間隔
+(setq auto-save-timeout 15)
+;; オートセーブファイル作成までのタイプ間隔
+(setq auto-save-interval 60)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;    変更されたファイルの自動更新                       ;;
