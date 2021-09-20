@@ -98,7 +98,9 @@
 (setq frame-title-format "%f")
 
 ;; 行番号を常に表示する
-(global-linum-mode t)
+;; (global-linum-mode t)
+(global-display-line-numbers-mode t)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; インデントの設定                                       ;;
@@ -237,4 +239,8 @@
 ;;(require 'git-gutter)
 
 ;; If you enable global minor mode
-(global-git-gutter-mode t)            
+(when (require 'git-gutter nil t)
+  (global-git-gutter-mode t)
+  ;; linum-modeを利用している場合は次の設定も追加
+  ;; (git-gutter:linum-setup)
+  )
